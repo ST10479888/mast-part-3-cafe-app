@@ -44,6 +44,11 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
   const [image, setImage] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  
+  // Button press states
+  const [isSavePressed, setIsSavePressed] = useState(false);
+  const [isCancelPressed, setIsCancelPressed] = useState(false);
+  const [isDropdownPressed, setIsDropdownPressed] = useState(false);
 
   const categories: { label: string; value: Course }[] = [
     { label: "STARTER", value: "STARTER" },
@@ -122,7 +127,16 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
           <Text style={styles.label}>Category</Text>
           
           {/* CUSTOM DROPDOWN */}
-          <TouchableOpacity style={styles.pickerBox} onPress={toggleDropdown}>
+          <TouchableOpacity 
+            style={[
+              styles.pickerBox,
+              isDropdownPressed && styles.pickerBoxPressed
+            ]} 
+            onPress={toggleDropdown}
+            onPressIn={() => setIsDropdownPressed(true)}
+            onPressOut={() => setIsDropdownPressed(false)}
+            activeOpacity={1}
+          >
             <Text style={styles.pickerText}>{category}</Text>
             <Text style={styles.dropdownArrow}>▼</Text>
           </TouchableOpacity>
@@ -148,6 +162,7 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
                       category === cat.value && styles.dropdownItemSelected
                     ]}
                     onPress={() => selectCategory(cat.value)}
+                    activeOpacity={0.7}
                   >
                     <Text style={[
                       styles.dropdownItemText,
@@ -190,13 +205,28 @@ export default function AddItemScreen({ navigation, addItem }: Props) {
             <Image source={{ uri: image }} style={styles.preview} />
           ) : null}
 
-          <TouchableOpacity style={styles.save} onPress={onSave}>
+          <TouchableOpacity 
+            style={[
+              styles.save,
+              isSavePressed && styles.savePressed
+            ]}
+            onPress={onSave}
+            onPressIn={() => setIsSavePressed(true)}
+            onPressOut={() => setIsSavePressed(false)}
+            activeOpacity={1}
+          >
             <Text style={styles.saveText}>Save Item</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.cancel}
+            style={[
+              styles.cancel,
+              isCancelPressed && styles.cancelPressed
+            ]}
             onPress={() => navigation.goBack()}
+            onPressIn={() => setIsCancelPressed(true)}
+            onPressOut={() => setIsCancelPressed(false)}
+            activeOpacity={1}
           >
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
@@ -249,7 +279,7 @@ const styles = StyleSheet.create({
   pickerBox: {
     backgroundColor: c.input,
     borderRadius: 12,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: c.border,
     height: 56,
     justifyContent: "space-between",
@@ -258,10 +288,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 16,
     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+    overflow: 'hidden',
+    transform: [{ scale: 1 }],
+  },
+  pickerBoxPressed: {
+    transform: [{ scale: 0.98 }],
+    backgroundColor: '#374151',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
+    elevation: 2,
   },
   pickerText: {
     color: c.text,
@@ -293,13 +331,18 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   dropdownItem: {
-    paddingVertical: 16,
-    paddingHorizontal: 18,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: c.border,
   },
   dropdownItemSelected: {
     backgroundColor: c.accent,
+    elevation: 4,
+    shadowColor: c.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   dropdownItemText: {
     color: c.text,
@@ -325,37 +368,56 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginTop: 28,
     alignItems: "center",
-    elevation: 4,
+    elevation: 8,
     shadowColor: c.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
     transform: [{ scale: 1 }],
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(229, 62, 62, 0.3)',
+  },
+  savePressed: {
+    transform: [{ scale: 0.95 }],
+    backgroundColor: '#c53030',
+    elevation: 4,
+    shadowOffset: { width: 0, height: 3 },
   },
   saveText: {
     color: "#ffffff",
-    fontWeight: "700",
+    fontWeight: "800",
     fontSize: 16,
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   cancel: {
     alignItems: "center",
     marginTop: 20,
     padding: 16,
     borderRadius: 12,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: c.border,
-    backgroundColor: c.input,
-    elevation: 2,
+    backgroundColor: 'transparent',
+    elevation: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    overflow: 'hidden',
+    transform: [{ scale: 1 }],
+  },
+  cancelPressed: {
+    transform: [{ scale: 0.95 }],
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    elevation: 2,
   },
   cancelText: {
     color: c.secondary,
-    fontWeight: "600",
+    fontWeight: "700",
     fontSize: 15,
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
   },
 });

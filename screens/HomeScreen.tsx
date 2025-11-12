@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   FlatList,
@@ -18,12 +18,18 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home"> & {
   averages: { STARTER: string; MAIN: string; DESSERT: string };
 };
 
+
 export default function HomeScreen({
   navigation,
   items,
   removeItem,
   averages,
 }: Props) {
+  // Button press states
+  const [pressedRemoveId, setPressedRemoveId] = useState<string | null>(null);
+  const [isAddPressed, setIsAddPressed] = useState(false);
+  const [isFilterPressed, setIsFilterPressed] = useState(false);
+
   const confirmRemove = (id: string) => {
     Alert.alert("Remove item", "Are you sure you want to remove this item?", [
       { text: "Cancel", style: "cancel" },
@@ -77,8 +83,14 @@ export default function HomeScreen({
                 {item.category} · R{item.price} · {item.intensity}
               </Text>
               <TouchableOpacity
-                style={styles.remove}
+                style={[
+                  styles.remove,
+                  pressedRemoveId === item.id && styles.removePressed
+                ]}
                 onPress={() => confirmRemove(item.id)}
+                onPressIn={() => setPressedRemoveId(item.id)}
+                onPressOut={() => setPressedRemoveId(null)}
+                activeOpacity={1}
               >
                 <Text style={styles.removeText}>Remove</Text>
               </TouchableOpacity>
@@ -97,15 +109,28 @@ export default function HomeScreen({
       {/* BUTTONS */}
       <View style={styles.fabs}>
         <TouchableOpacity
-          style={styles.fab}
+          style={[
+            styles.fab,
+            isAddPressed && styles.fabPressed
+          ]}
           onPress={() => navigation.navigate("AddItem")}
+          onPressIn={() => setIsAddPressed(true)}
+          onPressOut={() => setIsAddPressed(false)}
+          activeOpacity={1}
         >
           <Text style={styles.fabText}>Add</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.fab, styles.fabAlt]}
+          style={[
+            styles.fab,
+            styles.fabAlt,
+            isFilterPressed && styles.fabPressed
+          ]}
           onPress={() => navigation.navigate("Filter")}
+          onPressIn={() => setIsFilterPressed(true)}
+          onPressOut={() => setIsFilterPressed(false)}
+          activeOpacity={1}
         >
           <Text style={styles.fabText}>Filter</Text>
         </TouchableOpacity>
@@ -115,24 +140,24 @@ export default function HomeScreen({
 }
 
 const c = {
-  bg: "#000000", // Changed to black
-  card: "#1a1a1a", // Darker card
-  text: "#ffffff", // White text
-  secondary: "#a0aec0", // Lighter secondary
+  bg: "#000000",
+  card: "#1a1a1a",
+  text: "#ffffff",
+  secondary: "#a0aec0",
   accent: "#e53e3e",    
-  input: "#2d3748", // Dark input
-  border: "#4a5568", // Darker border
+  input: "#2d3748",
+  border: "#4a5568",
   success: "#38a169",   
 };
 
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: c.bg, // Black background
+    backgroundColor: c.bg,
     padding: 0 
   },
   heading: {
-    color: c.text, // White text
+    color: c.text,
     fontSize: 32,
     fontWeight: "800",
     textAlign: "center",
@@ -149,7 +174,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   stat: {
-    backgroundColor: c.card, // Dark card
+    backgroundColor: c.card,
     flex: 1,
     borderRadius: 16,
     paddingVertical: 20,
@@ -161,7 +186,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 8,
     borderWidth: 1.5,
-    borderColor: c.border, // Dark border
+    borderColor: c.border,
   },
   statLabel: { 
     color: c.secondary, 
@@ -185,7 +210,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   card: {
-    backgroundColor: c.card, // Dark card
+    backgroundColor: c.card,
     borderRadius: 16,
     overflow: "hidden",
     marginVertical: 8,
@@ -196,18 +221,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 8,
     borderWidth: 1.5,
-    borderColor: c.border, // Dark border
+    borderColor: c.border,
   },
   image: { 
     width: "100%", 
     height: 180,
-    backgroundColor: "#1a1a1a", // Dark background for image
+    backgroundColor: "#1a1a1a",
   },
   body: { 
     padding: 20 
   },
   title: { 
-    color: c.text, // White text
+    color: c.text,
     fontSize: 18, 
     fontWeight: "800",
     letterSpacing: -0.3,
@@ -228,21 +253,35 @@ const styles = StyleSheet.create({
   },
   remove: {
     backgroundColor: c.accent,
-    paddingVertical: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 16,
-    elevation: 2,
+    elevation: 6,
     shadowColor: c.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    borderWidth: 2,
+    borderColor: 'rgba(229, 62, 62, 0.3)',
+    overflow: 'hidden',
+    transform: [{ scale: 1 }],
+  },
+  removePressed: {
+    transform: [{ scale: 0.95 }],
+    backgroundColor: '#c53030',
+    elevation: 3,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
   removeText: { 
     color: "#ffffff", 
-    fontWeight: "700",
+    fontWeight: "800",
     fontSize: 14,
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   fabs: {
     position: "absolute",
@@ -253,24 +292,37 @@ const styles = StyleSheet.create({
   },
   fab: {
     backgroundColor: c.accent,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 16,
-    elevation: 6,
+    paddingVertical: 18,
+    paddingHorizontal: 28,
+    borderRadius: 20,
+    elevation: 12,
     shadowColor: c.accent,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(229, 62, 62, 0.4)',
+    overflow: 'hidden',
+    transform: [{ scale: 1 }],
+  },
+  fabPressed: {
+    transform: [{ scale: 0.9 }],
+    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
   },
   fabAlt: { 
     backgroundColor: c.success,
     shadowColor: c.success,
+    borderColor: 'rgba(56, 161, 105, 0.4)',
   },
   fabText: { 
     color: "#ffffff", 
-    fontWeight: "800",
-    fontSize: 15,
-    letterSpacing: 0.5,
+    fontWeight: "900",
+    fontSize: 16,
+    letterSpacing: 1,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   empty: {
     alignItems: 'center',
@@ -279,7 +331,7 @@ const styles = StyleSheet.create({
     marginTop: 80,
   },
   emptyText: {
-    color: c.text, // White text
+    color: c.text,
     fontSize: 22,
     fontWeight: '800',
     marginBottom: 12,
@@ -291,5 +343,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: "500",
     letterSpacing: 0.3,
+    
   },
 });

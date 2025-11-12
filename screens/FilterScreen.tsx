@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { menuItem, Course, RootStackParamList } from "../type";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -47,7 +46,7 @@ export default function FilterScreen({ route, items = [] }: Props) {
     <SafeAreaView style={styles.container}>
       {/* CUSTOM DROPDOWN */}
       <View style={styles.pickerWrap}>
-        <TouchableOpacity style={styles.pickerBox} onPress={toggleDropdown}>
+        <TouchableOpacity style={styles.pickerBox} onPress={toggleDropdown} activeOpacity={0.8}>
           <Text style={styles.pickerText}>{selected}</Text>
           <Text style={styles.dropdownArrow}>▼</Text>
         </TouchableOpacity>
@@ -74,6 +73,7 @@ export default function FilterScreen({ route, items = [] }: Props) {
                   selected === category.value && styles.dropdownItemSelected
                 ]}
                 onPress={() => selectCategory(category.value)}
+                activeOpacity={0.7}
               >
                 <Text style={[
                   styles.dropdownItemText,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   pickerBox: {
     backgroundColor: c.input,
     borderRadius: 12,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: c.border,
     height: 56,
     justifyContent: "space-between",
@@ -150,10 +150,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     flexDirection: "row",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+    overflow: 'hidden',
   },
   pickerText: {
     color: c.text,
@@ -185,13 +186,18 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   dropdownItem: {
-    paddingVertical: 16,
-    paddingHorizontal: 18,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: c.border,
   },
   dropdownItemSelected: {
     backgroundColor: c.accent,
+    elevation: 4,
+    shadowColor: c.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   dropdownItemText: {
     color: c.text,

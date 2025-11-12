@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../type"; 
@@ -6,6 +6,8 @@ import { RootStackParamList } from "../type";
 type Props = NativeStackScreenProps<RootStackParamList, "Welcome">; 
 
 export default function WelcomeScreen({ navigation }: Props) {
+  const [isCtaPressed, setIsCtaPressed] = useState(false);
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -18,7 +20,16 @@ export default function WelcomeScreen({ navigation }: Props) {
         <View style={styles.center}>
           <Text style={styles.title}>Welcome to Christoffel Cutlery by Christoffel</Text>
           <Text style={styles.subtitle}>Experience the best Cuisine</Text>
-          <TouchableOpacity style={styles.cta} onPress={() => navigation.replace("Home")}>
+          <TouchableOpacity 
+            style={[
+              styles.cta,
+              isCtaPressed && styles.ctaPressed
+            ]} 
+            onPress={() => navigation.replace("Home")}
+            onPressIn={() => setIsCtaPressed(true)}
+            onPressOut={() => setIsCtaPressed(false)}
+            activeOpacity={1}
+          >
             <Text style={styles.ctaText}>MENU</Text>
           </TouchableOpacity>
         </View>
@@ -71,37 +82,32 @@ const styles = StyleSheet.create({
   },
   cta: { 
     backgroundColor: c.accent, 
-    paddingVertical: 18, 
-    paddingHorizontal: 56, 
-    borderRadius: 16, 
-    elevation: 8,
+    paddingVertical: 20, 
+    paddingHorizontal: 60, 
+    borderRadius: 20, 
+    elevation: 16,
     shadowColor: c.accent,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.6,
+    shadowRadius: 20,
+    borderWidth: 3,
+    borderColor: 'rgba(229, 62, 62, 0.5)',
+    overflow: 'hidden',
     transform: [{ scale: 1 }],
   },
+  ctaPressed: {
+    transform: [{ scale: 0.95 }],
+    backgroundColor: '#c53030',
+    elevation: 8,
+    shadowOffset: { width: 0, height: 6 },
+  },
   ctaText: { 
-    color: c.text, 
-    fontWeight: "800", 
+    color: "#ffffff", 
+    fontWeight: "900", 
     fontSize: 18,
-    letterSpacing: 1.2,
+    letterSpacing: 1.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 3,
   },
 });
-//CODE ATTRIBUTIONS//
-
-// Title: cafe app (MAST POE 2025)
-// Author: Asheel Singh
-// Date: 12/11/2025
-// Version: 4.5
-// Based on the learning materials of the Independent Institute of Education (IIE)
-
-//Title: cafe app (MAST POE 2025)
-//Author: w3schools
-//Date: 12/11/2025
-//Available: https://www.w3schools.com/html/default.asp
-
-//Title: cafe app (MAST POE 2025)
-//Author: Visual Studio Code (Chatbot)
-//Date: 12/11/2025
-//Available: https://code.visualstudio.com/

@@ -49,7 +49,7 @@ const predefined: menuItem[] = [
   },
 ];
 
-// We'll render screens via render callbacks so they receive latest props from App.
+
 
 export default function App() {
   const [items, setItems] = useState<menuItem[]>(predefined);
@@ -106,6 +106,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
 
 //CODE ATTRIBUTIONS//
 
